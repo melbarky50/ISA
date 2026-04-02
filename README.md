@@ -1,1 +1,1125 @@
-# ISA
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ISA — UNI 9182</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --bg:#060810;--s1:#0b0e18;--s2:#111520;--s3:#181d2a;--s4:#1e2435;
+  --bd:#222840;--bd2:#2c3450;
+  --afs:#22d3ee;--acs:#f97316;--tot:#c084fc;
+  --ok:#10b981;--warn:#f59e0b;--red:#ef4444;
+  --tx:#dde4f5;--mu:#4b5680;--mu2:#7b88b0;
+  --r:5px;--r2:9px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:'DM Mono',monospace;font-size:12px;min-height:100vh}
+ 
+header{background:var(--s1);border-bottom:1px solid var(--bd);padding:11px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:36px;height:36px;border-radius:7px;background:linear-gradient(135deg,var(--afs),var(--tot));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;color:#060810;font-size:11px}
+.brand h1{font-family:'Syne',sans-serif;font-weight:800;font-size:14px;letter-spacing:-.3px}
+.brand p{color:var(--mu2);font-size:9px;margin-top:1px}
+.hbtns{display:flex;gap:5px}
+.btn{padding:6px 13px;border-radius:var(--r);border:none;cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.5px;text-transform:uppercase;transition:all .15s}
+.btn-g{background:transparent;border:1px solid var(--bd2);color:var(--mu2)}
+.btn-g:hover{border-color:var(--afs);color:var(--afs)}
+.btn-p{background:linear-gradient(135deg,var(--afs),var(--tot));color:#060810;font-weight:700}
+.btn-p:hover{opacity:.88;transform:translateY(-1px)}
+.btn-sm{padding:3px 8px;font-size:9px}
+.btn-ex{background:var(--s3);border:1px solid var(--bd2);color:var(--mu2)}
+.btn-ex:hover{border-color:var(--ok);color:var(--ok)}
+ 
+.layout{display:flex;height:calc(100vh - 60px)}
+ 
+/* ── SIDEBAR ── */
+.sb{width:270px;min-width:270px;background:var(--s1);border-right:1px solid var(--bd);overflow-y:auto;padding:12px}
+.st{font-family:'Syne',sans-serif;font-weight:700;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mu);padding-bottom:5px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.fd{margin-bottom:8px}
+label{display:block;color:var(--mu2);font-size:9px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px}
+select,input[type=number],input[type=text]{width:100%;background:var(--s2);border:1px solid var(--bd);color:var(--tx);font-family:'DM Mono',monospace;font-size:11px;padding:6px 9px;border-radius:var(--r);outline:none;transition:border-color .15s}
+select:focus,input:focus{border-color:var(--afs)}
+select option{background:var(--s2)}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ib{background:transparent;border:1px solid var(--bd);color:var(--mu2);border-radius:3px;padding:2px 7px;font-size:9px;cursor:pointer;transition:all .12s;font-family:'DM Mono',monospace}
+.ib:hover{border-color:var(--afs);color:var(--afs)}
+.ib.dl:hover{border-color:var(--red);color:var(--red)}
+.sep{height:10px}
+ 
+/* Colonna card in sidebar */
+.col-card{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r2);margin-bottom:6px;overflow:hidden}
+.col-hdr{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:linear-gradient(90deg,rgba(192,132,252,.08),transparent);border-bottom:1px solid var(--bd)}
+.col-lbl{font-family:'Syne',sans-serif;font-weight:700;font-size:11px;color:var(--tot)}
+.col-acts{display:flex;gap:3px}
+.bath-list{padding:5px}
+.bath-item{display:flex;align-items:center;gap:4px;padding:4px 6px;border-radius:var(--r);background:var(--bg);border:1px solid var(--bd);margin-bottom:3px}
+.bath-item-name{flex:1;font-size:10px}
+.floor-tag{font-size:8px;background:rgba(34,211,238,.1);color:var(--afs);border:1px solid rgba(34,211,238,.2);border-radius:3px;padding:1px 5px}
+.order-tag{font-size:8px;color:var(--mu);background:var(--s3);padding:1px 5px;border-radius:3px}
+/* ── RIGHT SETTINGS PANEL ── */
+.settings-panel{
+  width:220px;min-width:220px;background:var(--s1);border-left:1px solid var(--bd);
+  overflow-y:auto;padding:12px;font-size:11px;
+}
+.settings-table{width:100%;border-collapse:collapse}
+.settings-table td{padding:4px 3px;vertical-align:middle}
+.settings-table td:first-child{color:var(--mu2);font-size:9px;white-space:nowrap;padding-right:8px}
+.settings-table select,.settings-table input{font-size:10px;padding:4px 6px}
+ 
+/* ── FULLSCREEN MODAL ── */
+ 
+/* ── DRAG HANDLE ── */
+.drag-handle{cursor:grab;color:var(--mu);font-size:12px;padding:0 3px;user-select:none}
+.drag-handle:active{cursor:grabbing}
+.bath-item.drag-over{border-color:var(--afs);background:rgba(34,211,238,.06)}
+.bath-item.dragging{opacity:.4}
+ 
+ 
+/* ── MAIN ── */
+.main{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.cp{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r2);overflow:hidden}
+.ch{padding:9px 13px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;background:linear-gradient(90deg,rgba(34,211,238,.04),transparent)}
+.ct{font-family:'Syne',sans-serif;font-weight:700;font-size:13px}
+.bdg{font-size:8px;padding:2px 6px;border-radius:20px;background:var(--s3);color:var(--mu2);border:1px solid var(--bd)}
+.fg{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1px;background:var(--bd)}
+.fc{background:var(--s1);padding:7px 10px;display:flex;align-items:center;gap:7px}
+.fn{flex:1;font-size:10px;color:var(--mu2)}
+.fq{width:44px;background:var(--s2);border:1px solid var(--bd);color:var(--afs);font-family:'DM Mono',monospace;font-size:11px;padding:4px 5px;border-radius:var(--r);text-align:center;outline:none;transition:border-color .15s}
+.fq:focus{border-color:var(--afs)}
+ 
+/* Results */
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r2);padding:13px;position:relative;overflow:hidden}
+.card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.ca::after{background:var(--afs)}.cc::after{background:var(--acs)}.ctt::after{background:var(--tot)}
+.clb{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--mu);margin-bottom:4px}
+.cv{font-family:'Syne',sans-serif;font-weight:800;font-size:22px}
+.cv span{font-size:11px;font-weight:400;color:var(--mu)}
+.cdn{margin-top:8px;padding:7px;background:var(--bg);border-radius:var(--r);border:1px solid var(--bd)}
+.cdnv{font-family:'Syne',sans-serif;font-weight:800;font-size:16px}
+.cdns{font-size:8px;color:var(--mu);margin-top:1px}
+ 
+.dbox{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r2);padding:14px;overflow-x:auto}
+.dtitle{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.tw{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r2);overflow:hidden}
+.th2{padding:9px 13px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.tt{font-family:'Syne',sans-serif;font-weight:700;font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:10px}
+th{text-align:left;color:var(--mu);font-size:8px;letter-spacing:.8px;text-transform:uppercase;padding:6px 9px;border-bottom:1px solid var(--bd);background:var(--s2);font-weight:400;white-space:nowrap}
+td{padding:6px 9px;border-bottom:1px solid rgba(34,40,64,.5);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+.tr-col td{background:rgba(192,132,252,.07);color:var(--tot);font-weight:700;font-family:'Syne',sans-serif;font-size:11px}
+.tr-floor td{background:rgba(34,211,238,.04);color:var(--afs);padding-left:14px;font-weight:500;font-size:10px}
+.tr-bath td{padding-left:26px}
+.tr-seg td{background:rgba(16,185,129,.04);color:var(--ok);padding-left:16px;font-size:9px;font-style:italic}
+.tr-tot td{background:rgba(192,132,252,.08);font-weight:700;border-top:1px solid var(--bd2);color:var(--tot)}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.ca2{color:var(--afs)}.cc2{color:var(--acs)}.ct3{color:var(--tot)}
+.chip{display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;border:1px solid;white-space:nowrap}
+.cha{color:var(--afs);border-color:rgba(34,211,238,.25);background:rgba(34,211,238,.07)}
+.chc{color:var(--acs);border-color:rgba(249,115,22,.25);background:rgba(249,115,22,.07)}
+.cht{color:var(--tot);border-color:rgba(192,132,252,.25);background:rgba(192,132,252,.07)}
+ 
+.empty{text-align:center;padding:50px 20px}
+.empty .ico{font-size:40px;opacity:.25;margin-bottom:12px}
+.empty p{font-size:12px;line-height:2;color:var(--mu2)}
+ 
+.ov{position:fixed;inset:0;background:rgba(6,8,16,.88);display:flex;align-items:center;justify-content:center;z-index:200}
+.mo{background:var(--s1);border:1px solid var(--bd2);border-radius:var(--r2);width:90%;max-width:400px;padding:18px}
+.mo h3{font-family:'Syne',sans-serif;font-weight:800;font-size:14px;margin-bottom:11px}
+.ma{display:flex;gap:6px;justify-content:flex-end;margin-top:14px}
+.hid{display:none!important}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.note{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.18);border-radius:var(--r);padding:7px 9px;font-size:9px;color:var(--warn);line-height:1.6;margin-bottom:8px}
+ 
+/* ── SETTINGS PANEL (right) ── */
+.settings-panel{
+  width:240px;min-width:240px;background:var(--s1);border-left:1px solid var(--bd);
+  overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:0;
+}
+.settings-panel .st{margin-bottom:8px}
+ 
+/* ── FULLSCREEN OVERLAY ── */
+.fs-overlay{position:fixed;inset:0;background:#060810;z-index:300;display:flex;flex-direction:column}
+.fs-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--bd);background:var(--s1)}
+.fs-header span{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--tot)}
+.fs-body{flex:1;overflow:auto;padding:16px;background:#060810}
+.fs-body svg{width:100%!important;max-height:none!important;height:calc(100vh - 70px)!important;display:block!important}
+ 
+/* ── DRAG HANDLE ── */
+.drag-handle{
+  cursor:grab;color:var(--mu);font-size:12px;padding:0 3px;
+  user-select:none;
+}
+.drag-handle:active{cursor:grabbing}
+.bath-item.dragging{opacity:.4;border-style:dashed}
+.bath-item.drag-over{border-color:var(--afs);background:rgba(34,211,238,.06)}
+ 
+/* ── SETTINGS TABLE ── */
+.settings-table{width:100%;border-collapse:collapse;font-size:10px;margin-top:6px}
+.settings-table td{padding:5px 7px;border-bottom:1px solid var(--bd);vertical-align:middle}
+.settings-table td:first-child{color:var(--mu2);white-space:nowrap;width:50%}
+.settings-table select,.settings-table input{font-size:10px;padding:4px 6px}
+</style>
+</head>
+<body>
+ 
+<header>
+  <div class="brand">
+    <div class="logo">ISA</div>
+    <div>
+      <h1>Dimensionamento Idrico — UNI 9182</h1>
+      <p>Prospetto D · Portate & Diametri · Logica Ultimo→Primo</p>
+    </div>
+  </div>
+  <div class="hbtns">
+    <button class="btn btn-ex" onclick="expXL()">↓ Excel</button>
+    <button class="btn btn-ex" onclick="expPDF()">↓ PDF</button>
+    <button class="btn btn-ex" onclick="expDXF()" style="border-color:rgba(192,132,252,.4);color:var(--tot)" title="Esporta schema in formato DXF (AutoCAD)">↓ DXF</button>
+    <button class="btn btn-p" onclick="runCalc()">▶ CALCOLA</button>
+  </div>
+</header>
+ 
+<div class="layout">
+ 
+<!-- ══ SIDEBAR ══ -->
+<div class="sb">
+  <div class="st">
+    <span>Colonne</span>
+    <button class="ib" onclick="addCol()">+ Colonna</button>
+  </div>
+  <div class="note">
+    Ogni colonna percorre più piani.<br>
+    Ordine #1 = più lontano dalla colonna.
+  </div>
+  <div id="col-tree"></div>
+</div>
+ 
+<!-- ══ MAIN ══ -->
+<div class="main" id="main">
+  <div class="empty">
+    <div class="ico">🏗️</div>
+    <p>Aggiungi una colonna<br>poi aggiungi i bagni con piano e ordine<br>poi premi <strong>CALCOLA</strong></p>
+  </div>
+</div>
+</div>
+ 
+<!-- ══ SETTINGS PANEL (right) ══ -->
+<div class="settings-panel">
+  <div class="st">Impostazioni</div>
+  <table class="settings-table">
+    <tr>
+      <td>Tipo Utenza</td>
+      <td><select id="b3" onchange="rebuildUI()">
+        <option value="privato">Privato</option>
+        <option value="albergo">Albergo / Edificio</option>
+      </select></td>
+    </tr>
+    <tr>
+      <td>Tipo Vaso</td>
+      <td><select id="c3">
+        <option value="rapido">Passo Rapido</option>
+        <option value="cassetta">Cassetta</option>
+      </select></td>
+    </tr>
+    <tr>
+      <td>V progetto</td>
+      <td><input type="number" id="b5" value="1.6" step="0.1" min="0.1"> m/s</td>
+    </tr>
+    <tr>
+      <td>V max</td>
+      <td><input type="number" id="c5" value="1.5" step="0.1" min="0.1"> m/s</td>
+    </tr>
+    <tr>
+      <td>Mat. colonna</td>
+      <td><select id="mat-col">
+        <option value="inox">Inox AISI 304</option>
+        <option value="en">Acciaio EN</option>
+        <option value="multi">Multistrato</option>
+      </select></td>
+    </tr>
+    <tr>
+      <td>Mat. stacchi</td>
+      <td><select id="mat-br">
+        <option value="inox">Inox AISI 304</option>
+        <option value="multi">Multistrato</option>
+        <option value="en">Acciaio EN</option>
+      </select></td>
+    </tr>
+  </table>
+</div>
+ 
+<!-- Fullscreen schema modal -->
+<div id="fs-modal" class="fs-overlay hid">
+  <div class="fs-header" style="background:var(--s1);border-bottom:1px solid var(--bd);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;z-index:10;position:relative">
+    <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--tot)">📐 Schema Colonne — Fullscreen</span>
+    <button onclick="closeFS()" style="background:#ef4444;border:none;color:white;font-family:'DM Mono',monospace;font-size:11px;padding:6px 14px;border-radius:5px;cursor:pointer;letter-spacing:.5px;text-transform:uppercase">✕ CHIUDI</button>
+  </div>
+  <div class="fs-body" id="fs-body" style="flex:1;overflow:auto;padding:16px;background:#060810"></div>
+</div>
+ 
+<!-- Modal: add colonna -->
+<div id="m-col" class="ov hid">
+  <div class="mo">
+    <h3>Nuova Colonna</h3>
+    <div class="fd"><label>Nome colonna</label><input type="text" id="mc-n" placeholder="es. Colonna A"></div>
+    <div class="ma">
+      <button class="btn btn-g" onclick="cm('m-col')">Annulla</button>
+      <button class="btn btn-p" onclick="confCol()">Aggiungi</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- Modal: add bagno -->
+<div id="m-bath" class="ov hid">
+  <div class="mo">
+    <h3 id="mb-title">Nuovo Bagno</h3>
+    <div class="fd"><label>Nome bagno</label><input type="text" id="mb-n" placeholder="es. Bagno 1A"></div>
+    <div class="r2">
+      <div class="fd"><label>Piano</label><input type="number" id="mb-fl" value="1" min="1"></div>
+      <div class="fd"><label>Ordine idraulico</label><input type="number" id="mb-or" value="1" min="1"></div>
+    </div>
+    <div class="fd" id="mb-col-wrap" style="display:none">
+      <label>Sposta in colonna</label>
+      <select id="mb-col-sel"></select>
+    </div>
+    <div style="color:var(--mu2);font-size:9px;margin-top:4px;line-height:1.6">
+      Ordine #1 = più lontano dalla colonna.
+    </div>
+    <div class="ma">
+      <button class="btn btn-g" onclick="cm('m-bath')">Annulla</button>
+      <button class="btn btn-p" id="mb-confirm-btn" onclick="confBath()">Aggiungi</button>
+    </div>
+  </div>
+</div>
+ 
+<script>
+// ═══════════════════════════════════════
+// DATA TABLES
+// ═══════════════════════════════════════
+const T_PRIV=[
+  {n:'Lavabo',a:.75,c:.75,t:1},{n:'Bidet',a:.75,c:.75,t:1},
+  {n:'Vasca',a:1.5,c:1.5,t:2},{n:'Doccia',a:1.5,c:1.5,t:2},
+  {n:'WC',a:3,c:0,t:3},{n:'Vaso',a:6,c:0,t:6},
+  {n:'Idrantino 3/8"',a:1,c:0,t:1},{n:'Idrantino 1/2"',a:2,c:0,t:2},
+  {n:'Idrantino 3/4"',a:3,c:0,t:3},{n:'Idrantino 1"',a:6,c:0,t:6},
+  {n:'Lavello cucina',a:1.5,c:1.5,t:2},{n:'Lavabiancheria',a:2,c:0,t:2},
+  {n:'Lavastoviglie',a:2,c:0,t:2},{n:'Pilozzo',a:1.5,c:1.5,t:2},
+];
+const T_ALB=[
+  {n:'Lavabo',a:1.5,c:1.5,t:2},{n:'Bidet',a:1.5,c:1.5,t:2},
+  {n:'Vasca',a:3,c:3,t:4},{n:'Doccia',a:3,c:3,t:4},
+  {n:'WC',a:5,c:0,t:5},{n:'Vaso',a:10,c:0,t:10},
+  {n:'Idrantino 3/8"',a:2,c:0,t:2},{n:'Idrantino 1/2"',a:4,c:0,t:4},
+  {n:'Idrantino 3/4"',a:6,c:0,t:6},{n:'Idrantino 1"',a:10,c:0,t:10},
+  {n:'Lavatoio cucina',a:3,c:3,t:4},{n:'Orinatoio (rubinetto)',a:.75,c:.75,t:0},
+  {n:'Orinatoio (rapido)',a:10,c:0,t:10},{n:'Lavello',a:2,c:2,t:3},
+  {n:'Pilozzo',a:2,c:2,t:3},{n:'Vuotatoio (cassetta)',a:5,c:0,t:5},
+  {n:'Vuotatoio (rapido)',a:10,c:10,t:0},{n:'Lavabo a canale',a:1.5,c:1.5,t:2},
+  {n:'Lavapiedi',a:1.5,c:1.5,t:2},{n:'Lavapadelle',a:2,c:2,t:3},
+  {n:'Lavabo clinico',a:1.5,c:1.5,t:2},{n:'Severino',a:.75,c:0,t:.75},
+  {n:'Doccia di emergenza',a:3,c:0,t:3},
+];
+ 
+const UC_PC=[[0,0],[6,.3],[8,.4],[10,.5],[12,.6],[14,.68],[16,.78],[18,.85],[20,.93],[25,1.13],[30,1.3],[35,1.46],[40,1.62],[50,1.9],[60,2.2],[70,2.4],[80,2.65],[90,2.9],[100,3.15],[120,3.65],[140,3.9],[160,4.25],[180,4.6],[200,4.95],[225,5.35],[250,5.75],[275,6.1],[300,6.45],[400,7.8],[500,9],[600,10],[700,11],[800,11.9],[900,12.9],[1000,13.8],[1250,15.5],[1500,17.5],[1750,18.8],[2000,20.5],[2250,22],[2500,23.5],[2750,24.5],[3000,26],[3500,28],[4000,30.5],[4500,32.5],[5000,34.5],[6000,38],[7000,41],[8000,44],[9000,47],[10000,50]];
+const UC_PR=[[0,0],[10,1.7],[12,1.9],[14,2.1],[16,2.27],[18,2.45],[20,2.6],[25,2.95],[30,3.25],[35,3.55],[40,3.8],[50,4.3],[60,4.8],[70,5.25],[80,5.6],[90,6],[100,6.35],[120,7.15],[140,7.5],[160,8],[180,8.5],[200,9],[225,9.5],[250,10],[275,10.5],[300,11],[400,12.7],[500,14],[600,15.1],[700,16.3],[800,17.3],[900,18.2],[1000,19],[1250,21],[1500,23],[1750,24.5],[2000,26],[2250,27.5],[2500,28.5],[2750,29.5],[3000,30.5],[3500,33],[4000,35],[4500,36.5],[5000,37.5],[6000,40.5],[7000,44],[8000,46],[9000,48],[10000,50]];
+const UC_AC=[[0,0],[6,.3],[8,.4],[10,.5],[12,.6],[14,.67],[16,.75],[18,.82],[20,.89],[25,1.05],[30,1.18],[35,1.35],[40,1.45],[50,1.65],[60,1.9],[70,2.1],[80,2.25],[90,2.45],[100,2.6],[120,2.9],[140,3.2],[160,3.5],[180,3.75],[200,3.95],[225,4.25],[250,4.5],[275,4.8],[300,5.05],[400,6],[500,6.9],[600,7.55],[700,8.3],[800,8.8],[900,9.5],[1000,10],[1250,11.3],[1500,12.4],[1750,13.6],[2000,14.5],[2250,15.4],[2500,16.2],[2750,17],[3000,18],[3500,19.5],[4000,21],[4500,22],[5000,23.5],[6000,25.5],[7000,27.5],[8000,29],[9000,30.5],[10000,32]];
+const UC_AR=[[0,0],[10,1.7],[12,1.87],[14,2.03],[16,2.17],[18,2.32],[20,2.45],[25,2.75],[30,3],[35,3.25],[40,3.55],[50,3.9],[60,4.2],[70,4.5],[80,4.8],[90,5.15],[100,5.35],[120,5.8],[140,6.2],[160,6.6],[180,7.1],[200,7.45],[225,7.8],[250,8.1],[275,8.4],[300,8.7],[400,9.8],[500,10.8],[600,11.6],[700,12.4],[800,13],[900,13.7],[1000,14.2],[1250,15.5],[1500,16.5],[1750,17.5],[2000,18.5],[2250,19.2],[2500,20],[2750,20.7],[3000,21.4],[3500,22.5],[4000,24],[4500,25],[5000,26.2],[6000,28],[7000,29],[8000,30],[9000,31.5],[10000,32]];
+ 
+const PIPE={
+  en:   {lbl:'Acciaio EN-10255',    d:[[0,0,0],[15,16.1,21.3],[20,21.7,26.9],[25,27.3,33.7],[32,36,42.4],[40,41.9,48.3],[50,53.1,60.3],[65,68.9,76.1],[80,80.9,88.9],[100,105.3,114.3],[125,129.7,139.7],[150,155.1,165.1],[200,209.1,219.1],[250,261.8,273],[300,288.2,323.9]]},
+  multi:{lbl:'Multistrato PE-Xb/Al',d:[[0,0,0],[16,12,16],[20,16,20],[26,20,26],[32,26,32],[40,33,40],[50,42,50],[63,54,63],[75,65,75],[90,76,90],[110,90,110]]},
+  inox: {lbl:'Acciaio Inox AISI 304',d:[[0,0,0],[15,17.12,21.34],[20,22.48,26.7],[25,27.86,33.4],[32,36.62,42.16],[40,42.72,48.26],[50,54.5,60.3],[65,70.3,76.1],[80,83.1,88.9],[100,107.9,114.3],[125,132.5,139.7],[150,160.3,168.3],[200,210.1,219.1],[250,263,273.1],[300,312.7,323.9]]},
+};
+ 
+// ═══════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════
+const G=id=>document.getElementById(id);
+const f2=v=>Number(v).toFixed(2);
+const f1=v=>Number(v).toFixed(1);
+ 
+function ucLookup(v,t){ if(v<=0)return 0; for(let[u,q]of t)if(u>=v)return q; return t[t.length-1][1] }
+ 
+// Ø = 2 * sqrt((Q[l/s]/1000 / v) / PI) * 1000  — exact Excel formula
+function calcMinD(q,v){ if(!q||!v||q<=0)return 0; return 2*Math.sqrt(((q/1000)/v)/Math.PI)*1000 }
+ 
+// Select DN: smallest DN >= Ø_calc (compare Ø with DN values, Di is reference only)
+function selectDN(d,mk){
+  if(!d||d<=0)return{dn:0,di:0,de:0};
+  const rows=PIPE[mk]?.d||PIPE.inox.d;
+  for(let[dn,di,de]of rows) if(dn>0&&dn>=d)return{dn,di,de};
+  const l=rows[rows.length-1];return{dn:l[0],di:l[1],de:l[2]};
+}
+ 
+function getUCT(){ const b=G('b3').value,c=G('c3').value; return b==='albergo'?(c==='rapido'?UC_AR:UC_AC):(c==='rapido'?UC_PR:UC_PC) }
+function getFix(){ return G('b3').value==='albergo'?T_ALB:T_PRIV }
+ 
+function chip(dn,cls){
+  if(!dn||!dn.dn)return'<span style="color:var(--mu)">—</span>';
+  return`<span class="chip ch${cls}">DN ${dn.dn}</span>`;
+}
+function toggleComp(uid){
+  const rows=document.querySelectorAll('.tr-comp#comp_'+uid);
+  const arr=document.getElementById('arr_'+uid);
+  if(!rows.length)return;
+  const hidden=rows[0].style.display==='none';
+  rows.forEach(r=>r.style.display=hidden?'':'none');
+  if(arr)arr.textContent=hidden?'▼':'▶';
+}
+function vchip(v){
+  if(!v||v<=0)return'<span style="color:var(--mu)">—</span>';
+  const vP=parseFloat(G('b5').value)||1.6;
+  const ok=v<=vP;
+  const col=ok?'#10b981':'#ef4444';
+  return`<span style="color:${col};font-weight:600">${Number(v).toFixed(2)}</span>`;
+}
+ 
+// ═══════════════════════════════════════
+// STATE — Colonne at top level
+// ═══════════════════════════════════════
+let ST={cols:[],nc:1,nb:1};
+let BQ={};        // {bathId:{fixName:qty}}
+let pendCol=null;
+let lastRes=null;
+let activeB=null;
+ 
+// ═══════════════════════════════════════
+// STRUCTURE MANAGEMENT
+// ═══════════════════════════════════════
+function addCol(){
+  G('mc-n').value='Colonna '+String.fromCharCode(64+ST.nc);
+  G('m-col').classList.remove('hid');
+}
+function confCol(){
+  const n=G('mc-n').value.trim()||'Colonna '+ST.nc;
+  ST.cols.push({id:'C'+ST.nc,lbl:n,baths:[]});
+  ST.nc++; cm('m-col'); rt(); rm();
+}
+let bathModalMode='add'; // 'add' | 'edit' | 'copy'
+let pendEditBid=null;
+ 
+function addBath(cid){
+  pendCol=cid; bathModalMode='add'; pendEditBid=null;
+  const col=ST.cols.find(c=>c.id===cid);
+  G('mb-title').textContent='Nuovo Bagno';
+  G('mb-n').value='Bagno '+ST.nb;
+  G('mb-fl').value=1;
+  G('mb-or').value=col?col.baths.length+1:1;
+  G('mb-col-wrap').style.display='none';
+  G('mb-confirm-btn').textContent='Aggiungi';
+  G('m-bath').classList.remove('hid');
+}
+ 
+function editBath(cid,bid){
+  pendCol=cid; bathModalMode='edit'; pendEditBid=bid;
+  const col=ST.cols.find(c=>c.id===cid);
+  const b=col?.baths.find(b=>b.id===bid);
+  if(!b)return;
+  G('mb-title').textContent='Modifica Bagno';
+  G('mb-n').value=b.lbl;
+  G('mb-fl').value=b.floor;
+  G('mb-or').value=b.order;
+  G('mb-col-wrap').style.display='none';
+  G('mb-confirm-btn').textContent='Salva';
+  G('m-bath').classList.remove('hid');
+}
+ 
+function copyBathModal(cid,bid){
+  pendCol=cid; bathModalMode='copy'; pendEditBid=bid;
+  const col=ST.cols.find(c=>c.id===cid);
+  const b=col?.baths.find(b=>b.id===bid);
+  if(!b)return;
+  G('mb-title').textContent='Copia Bagno';
+  G('mb-n').value=b.lbl+' (copia)';
+  G('mb-fl').value=b.floor;
+  G('mb-or').value=col.baths.length+1;
+  // populate colonna selector
+  const sel=G('mb-col-sel');
+  sel.innerHTML=ST.cols.map(c=>`<option value="${c.id}" ${c.id===cid?'selected':''}>${c.lbl}</option>`).join('');
+  G('mb-col-wrap').style.display='block';
+  G('mb-confirm-btn').textContent='Copia';
+  G('m-bath').classList.remove('hid');
+}
+ 
+function confBath(){
+  const n=G('mb-n').value.trim()||'Bagno '+ST.nb;
+  const fl=parseInt(G('mb-fl').value)||1;
+  const or=parseInt(G('mb-or').value)||1;
+ 
+  if(bathModalMode==='edit'){
+    // Edit existing bath
+    for(let col of ST.cols) for(let b of col.baths){
+      if(b.id===pendEditBid){b.lbl=n;b.floor=fl;b.order=or;break;}
+    }
+  } else if(bathModalMode==='copy'){
+    // Copy to selected colonna
+    const targetCid=G('mb-col-sel').value||pendCol;
+    const targetCol=ST.cols.find(c=>c.id===targetCid);
+    if(targetCol){
+      const newId='B'+ST.nb;
+      targetCol.baths.push({id:newId,lbl:n,floor:fl,order:or});
+      BQ[newId]={...BQ[pendEditBid]||{}};
+      ST.nb++;
+    }
+  } else {
+    // Add new
+    const col=ST.cols.find(c=>c.id===pendCol);
+    if(col){
+      const id='B'+ST.nb;
+      col.baths.push({id,lbl:n,floor:fl,order:or});
+      BQ[id]={};
+      ST.nb++;
+    }
+  }
+  cm('m-bath'); rt(); rm();
+}
+function delCol(id){ST.cols=ST.cols.filter(c=>c.id!==id);rt();rm()}
+function delBath(cid,bid){
+  const col=ST.cols.find(c=>c.id===cid);
+  if(col){col.baths=col.baths.filter(b=>b.id!==bid);delete BQ[bid];}
+  rt();rm();
+}
+function cm(id){G(id).classList.add('hid')}
+function rebuildUI(){rm()}
+ 
+// ── COPY BATH ──
+ 
+ 
+// ── MOVE ORDER (↑ / ↓) ──
+function moveOrder(cid,bid,dir){
+  const col=ST.cols.find(c=>c.id===cid);
+  if(!col)return;
+  const b=col.baths.find(b=>b.id===bid);
+  if(!b)return;
+  const newOrder=b.order+dir;
+  if(newOrder<1)return;
+  // Swap with bath that has that order
+  const other=col.baths.find(x=>x.id!==bid&&x.order===newOrder);
+  if(other)other.order=b.order;
+  b.order=newOrder;
+  rt();
+}
+ 
+ 
+ 
+// ── FULLSCREEN ──
+ 
+// ═══════════════════════════════════════
+// RENDER TREE (sidebar)
+// ═══════════════════════════════════════
+function rt(){
+  const t=G('col-tree');
+  if(!ST.cols.length){
+    t.innerHTML='<div style="color:var(--mu);font-size:10px;text-align:center;padding:8px">Nessuna colonna aggiunta</div>';
+    return;
+  }
+  t.innerHTML=ST.cols.map(col=>{
+    // group baths by floor for display
+    const byFloor={};
+    col.baths.sort((a,b)=>a.floor-b.floor||a.order-b.order).forEach(b=>{
+      if(!byFloor[b.floor])byFloor[b.floor]=[];
+      byFloor[b.floor].push(b);
+    });
+    const bathHTML=Object.entries(byFloor).map(([fl,baths])=>`
+      <div style="padding:3px 5px;color:var(--afs);font-size:9px;letter-spacing:.5px">Piano ${fl}</div>
+      ${baths.map(b=>`
+        <div class="bath-item" draggable="true"
+          ondragstart="dragStart(event,'${col.id}','${b.id}')"
+          ondragover="dragOver(event)"
+          ondragleave="dragLeave(event)"
+          ondrop="dragDrop(event,'${col.id}','${b.id}')">
+          <span class="drag-handle" title="Trascina per riordinare">⠿</span>
+          <span class="bath-item-name">🚿 ${b.lbl}</span>
+          <span class="order-tag">#${b.order}</span>
+          <span style="font-size:8px;color:var(--afs);background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.2);border-radius:3px;padding:1px 4px">P${b.floor}</span>
+          <button class="ib" title="Modifica nome/piano/ordine" onclick="editBath('${col.id}','${b.id}')" style="color:var(--afs)">✎</button>
+          <button class="ib" title="Copia bagno" onclick="copyBathModal('${col.id}','${b.id}')" style="color:var(--ok);border-color:rgba(16,185,129,.3)">⧉</button>
+          <button class="ib" title="Sposta su" onclick="moveOrder('${col.id}','${b.id}',-1)">↑</button>
+          <button class="ib" title="Sposta giù" onclick="moveOrder('${col.id}','${b.id}',+1)">↓</button>
+          <button class="ib dl" onclick="delBath('${col.id}','${b.id}')">✕</button>
+        </div>`).join('')}
+    `).join('');
+    return`<div class="col-card">
+      <div class="col-hdr">
+        <span class="col-lbl">⬆ ${col.lbl}</span>
+        <div class="col-acts">
+          <button class="ib" onclick="addBath('${col.id}')">+ Bagno</button>
+          <button class="ib dl" onclick="delCol('${col.id}')">✕</button>
+        </div>
+      </div>
+      <div class="bath-list">
+        ${bathHTML||'<div style="color:var(--mu);font-size:9px;padding:4px 5px">Nessun bagno</div>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+ 
+// ═══════════════════════════════════════
+// RENDER MAIN (fixture panels)
+// ═══════════════════════════════════════
+function rm(){
+  const mc=G('main');
+  const allB=[];
+  ST.cols.forEach(col=>col.baths.forEach(b=>allB.push({...b,colLbl:col.lbl})));
+  if(!allB.length){
+    mc.innerHTML='<div class="empty"><div class="ico">🏗️</div><p>Aggiungi una colonna e i bagni<br>poi inserisci gli apparecchi<br>e premi <strong>CALCOLA</strong></p></div>';
+    return;
+  }
+  const fix=getFix();
+  mc.innerHTML=`
+    <div class="tabs">
+      <button class="btn btn-sm ${!activeB?'btn-p':'btn-g'}" onclick="setAB(null)">Tutti</button>
+      ${allB.map(b=>`<button class="btn btn-sm ${activeB===b.id?'btn-p':'btn-g'}" onclick="setAB('${b.id}')">${b.lbl}</button>`).join('')}
+    </div>
+    ${allB.map(b=>`
+      <div id="pan-${b.id}" class="cp" style="${activeB&&activeB!==b.id?'display:none':''}">
+        <div class="ch">
+          <div>
+            <div class="ct">🚿 ${b.lbl}</div>
+            <div style="margin-top:3px;display:flex;gap:5px">
+              <span class="bdg">${b.colLbl}</span>
+              <span class="bdg">Piano ${b.floor}</span>
+              <span class="bdg">Ordine idraulico #${b.order}</span>
+            </div>
+          </div>
+        </div>
+        <div class="fg">
+          ${fix.map(f=>`
+            <div class="fc">
+              <span class="fn">${f.n}</span>
+              <input class="fq" type="number" min="0" value="${BQ[b.id]?.[f.n]||0}"
+                onchange="sq('${b.id}','${f.n}',this.value)">
+            </div>`).join('')}
+        </div>
+      </div>`).join('')}
+    <div id="res-area"></div>`;
+}
+ 
+function setAB(id){activeB=id;rm()}
+function sq(bid,fn,v){if(!BQ[bid])BQ[bid]={};BQ[bid][fn]=parseInt(v)||0}
+ 
+// ═══════════════════════════════════════
+// CALCULATE
+// ═══════════════════════════════════════
+function calcActualV(q_ls, dn_mm){
+  // v = Q[m3/s] / (PI * r^2)  where r = DI/2 in meters... 
+  // but we compare with DN per spec, so use DN as the pipe size reference
+  // actual velocity in pipe: v = Q / A = (q/1000) / (PI*(dn/2000)^2)
+  if(!q_ls||!dn_mm||dn_mm<=0) return 0;
+  const r = dn_mm/2000; // radius in meters
+  return (q_ls/1000) / (Math.PI*r*r);
+}
+ 
+function calcBath(bid){
+  const fix=getFix(),uct=getUCT(),vP=parseFloat(G('b5').value)||1.6,mk=G('mat-br').value;
+  let sa=0,sc=0,st=0;
+  fix.forEach(f=>{const q=BQ[bid]?.[f.n]||0;sa+=q*f.a;sc+=q*f.c;st+=q*f.t;});
+  const pa=ucLookup(sa,uct),pc=ucLookup(sc,uct),pt=ucLookup(st,uct);
+  const da=calcMinD(pa,vP),dc=calcMinD(pc,vP),dt=calcMinD(pt,vP);
+  const dna=selectDN(da,mk),dnc=selectDN(dc,mk),dnt=selectDN(dt,mk);
+  // Actual velocity in selected pipe
+  const va=calcActualV(pa,dna.dn),vc=calcActualV(pc,dnc.dn),vt=calcActualV(pt,dnt.dn);
+  return{sa,sc,st,pa,pc,pt,da,dc,dt,dna,dnc,dnt,va,vc,vt};
+}
+ 
+function runCalc(){
+  const uct=getUCT(),vP=parseFloat(G('b5').value)||1.6,mk=G('mat-col').value;
+  const res={cols:[],gUC:{a:0,c:0,t:0}};
+ 
+  for(let col of ST.cols){
+    // Sort baths by hydraulic order (1=farthest from base)
+    const sorted=[...col.baths].sort((a,b)=>a.order-b.order);
+    const cR={lbl:col.lbl,baths:[],segs:[],byFloor:{}};
+    let cumA=0,cumC=0,cumT=0;
+ 
+    for(let i=0;i<sorted.length;i++){
+      const b=sorted[i];
+      const br=calcBath(b.id);
+      // Group by floor for display
+      if(!cR.byFloor[b.floor])cR.byFloor[b.floor]=[];
+      cR.byFloor[b.floor].push({lbl:b.lbl,floor:b.floor,order:b.order,...br});
+ 
+      // Accumulate UC along colonna (T-junction per bath)
+      cumA+=br.sa;cumC+=br.sc;cumT+=br.st;
+ 
+      // Pipe segment on colonna after adding this bath
+      const spa=ucLookup(cumA,uct),spc=ucLookup(cumC,uct),spt=ucLookup(cumT,uct);
+      const sda=calcMinD(spa,vP),sdc=calcMinD(spc,vP),sdt=calcMinD(spt,vP);
+      const s_dna=selectDN(sda,mk),s_dnc=selectDN(sdc,mk),s_dnt=selectDN(sdt,mk);
+      const sva=calcActualV(spa,s_dna.dn),svc=calcActualV(spc,s_dnc.dn),svt=calcActualV(spt,s_dnt.dn);
+ 
+      const fromTo=i===0
+        ?`Tratto sotto bagno #${b.order} (${b.lbl})`
+        :`Tratto bagno #${sorted[i-1].order} → #${b.order} (${b.lbl})`;
+ 
+      cR.segs.push({
+        lbl:fromTo,bLbl:b.lbl,bFloor:b.floor,bOrder:b.order,
+        cumA,cumC,cumT,spa,spc,spt,sda,sdc,sdt,
+        dna:s_dna,dnc:s_dnc,dnt:s_dnt,
+        sva,svc,svt,
+      });
+      cR.baths.push({lbl:b.lbl,floor:b.floor,order:b.order,...br});
+    }
+ 
+    cR.totUC={a:cumA,c:cumC,t:cumT};
+    cR.tpa=ucLookup(cumA,uct);cR.tpc=ucLookup(cumC,uct);cR.tpt=ucLookup(cumT,uct);
+    cR.tdna=selectDN(calcMinD(cR.tpa,vP),mk);
+    cR.tdnc=selectDN(calcMinD(cR.tpc,vP),mk);
+    cR.tdnt=selectDN(calcMinD(cR.tpt,vP),mk);
+    cR.tva=calcActualV(cR.tpa,cR.tdna.dn);
+    cR.tvc=calcActualV(cR.tpc,cR.tdnc.dn);
+    cR.tvt=calcActualV(cR.tpt,cR.tdnt.dn);
+    res.cols.push(cR);
+    res.gUC.a+=cumA;res.gUC.c+=cumC;res.gUC.t+=cumT;
+  }
+ 
+  res.gpa=ucLookup(res.gUC.a,uct);res.gpc=ucLookup(res.gUC.c,uct);res.gpt=ucLookup(res.gUC.t,uct);
+  res.gda=calcMinD(res.gpa,vP);res.gdc=calcMinD(res.gpc,vP);res.gdt=calcMinD(res.gpt,vP);
+  res.gdna=selectDN(res.gda,mk);res.gdnc=selectDN(res.gdc,mk);res.gdnt=selectDN(res.gdt,mk);
+  lastRes=res;
+  renderRes(res);
+}
+ 
+// ═══════════════════════════════════════
+// RENDER RESULTS
+// ═══════════════════════════════════════
+function renderRes(res){
+  const ra=G('res-area');if(!ra)return;
+  const matCol=PIPE[G('mat-col').value].lbl;
+  const vP=parseFloat(G('b5').value)||1.6;
+ 
+  ra.innerHTML=`
+  <!-- CARDS -->
+  <div class="cards3" style="margin-top:14px">
+    ${[
+      ['ca','AFS — Acqua Fredda','ca2',res.gUC.a,res.gpa,res.gda,res.gdna],
+      ['cc','ACS — Acqua Calda','cc2',res.gUC.c,res.gpc,res.gdc,res.gdnc],
+      ['ctt','AFS+ACS — Totale','ct3',res.gUC.t,res.gpt,res.gdt,res.gdnt],
+    ].map(([cls,lbl,cc,uc,p,d,dn])=>`
+      <div class="card ${cls}">
+        <div class="clb">${lbl}</div>
+        <div class="cv ${cc}">${f2(p)} <span>l/s</span></div>
+        <div style="color:var(--mu);font-size:9px;margin-top:2px">UC: <b>${uc}</b> · Ø min: <b>${f1(d)} mm</b></div>
+        <div class="cdn">
+          <div class="clb">Colonna — ${matCol}</div>
+          <div class="cdnv ${cc}">DN ${dn.dn||'—'}</div>
+          <div class="cdns">DI ${dn.di} mm · DE ${dn.de} mm</div>
+        </div>
+      </div>`).join('')}
+  </div>
+ 
+  <!-- SVG DIAGRAM -->
+  <div class="dbox">
+    <div class="dtitle">📐 Schema Colonne <span class="bdg">connessione a T · calcolo #1→#n</span><button class="btn btn-ex btn-sm" style="margin-left:auto" onclick="openFullscreen()">⛶ Fullscreen</button></div>
+    ${buildSVG(res)}
+  </div>
+ 
+  <!-- DETAIL TABLE -->
+  <div class="tw">
+    <div class="th2">
+      <div class="tt">📊 Dettaglio per Colonna e Piano</div>
+      <div style="display:flex;gap:5px">
+        <button class="btn btn-ex btn-sm" onclick="expXL()">↓ Excel</button>
+        <button class="btn btn-ex btn-sm" onclick="expPDF()">↓ PDF</button>
+        <button class="btn btn-ex btn-sm" onclick="expDXF()" style="color:var(--tot)">↓ DXF</button>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th rowspan="2" style="vertical-align:bottom">Sezione</th>
+          <th class="num" colspan="3" style="border-bottom:none;color:var(--mu2)">Unità di Carico (UC)</th>
+          <th class="num" colspan="3" style="border-bottom:none;color:var(--mu2)">Portata (l/s)</th>
+          <th class="num" colspan="3" style="border-bottom:none;color:var(--mu2)">Ø min (mm)</th>
+          <th class="num" colspan="3" style="border-bottom:none;color:var(--mu2)">DN nominale</th>
+          <th class="num" colspan="3" style="border-bottom:none;color:var(--warn)">Velocità (m/s)</th>
+        </tr>
+        <tr>
+          <th class="num" style="color:var(--afs)">AFS</th>
+          <th class="num" style="color:var(--acs)">ACS</th>
+          <th class="num" style="color:var(--tot)">TOT</th>
+          <th class="num" style="color:var(--afs)">AFS l/s</th>
+          <th class="num" style="color:var(--acs)">ACS l/s</th>
+          <th class="num" style="color:var(--tot)">TOT l/s</th>
+          <th class="num" style="color:var(--afs)">Ø AFS mm</th>
+          <th class="num" style="color:var(--acs)">Ø ACS mm</th>
+          <th class="num" style="color:var(--tot)">Ø TOT mm</th>
+          <th class="num" style="color:var(--afs)">DN AFS</th>
+          <th class="num" style="color:var(--acs)">DN ACS</th>
+          <th class="num" style="color:var(--tot)">DN TOT</th>
+          <th class="num" style="color:var(--warn)">v AFS m/s</th>
+          <th class="num" style="color:var(--warn)">v ACS m/s</th>
+          <th class="num" style="color:var(--warn)">v TOT m/s</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${res.cols.map(col=>`
+          <tr class="tr-col"><td colspan="13">⬆ ${col.lbl}</td></tr>
+          ${/* baths grouped by floor */
+            Object.entries(col.byFloor).sort(([a],[b])=>+a-+b).map(([fl,baths])=>`
+              <tr class="tr-floor"><td colspan="13">Piano ${fl}</td></tr>
+              ${baths.sort((a,b)=>a.order-b.order).map(b=>`
+                <tr class="tr-bath">
+                  <td>🚿 ${b.lbl} <span style="color:var(--mu);font-size:8px">#${b.order}</span></td>
+                  <td class="num ca2">${b.sa}</td><td class="num cc2">${b.sc}</td><td class="num ct3">${b.st}</td>
+                  <td class="num ca2">${f2(b.pa)}</td><td class="num cc2">${f2(b.pc)}</td><td class="num ct3">${f2(b.pt)}</td>
+                  <td class="num" style="color:var(--mu2)">${f1(b.da)}</td><td class="num" style="color:var(--mu2)">${f1(b.dc)}</td><td class="num" style="color:var(--mu2)">${f1(b.dt)}</td>
+                  <td class="num">${chip(b.dna,'a')}</td><td class="num">${chip(b.dnc,'c')}</td><td class="num">${chip(b.dnt,'t')}</td>
+                  <td class="num" style="color:var(--warn)">${vchip(b.va)}</td><td class="num" style="color:var(--warn)">${vchip(b.vc)}</td><td class="num" style="color:var(--warn)">${vchip(b.vt)}</td>
+                </tr>`).join('')}`).join('')}
+          <tr><td colspan="13" style="padding:3px 9px 2px;color:var(--mu);font-size:8px;background:var(--s3)">
+            Tratti colonna (UC cumulativo dall'ordine #1):
+          </td></tr>
+          ${col.segs.map(s=>`
+            <tr class="tr-seg">
+              <td>↳ ${s.lbl}</td>
+              <td class="num">${s.cumA}</td><td class="num">${s.cumC}</td><td class="num">${s.cumT}</td>
+              <td class="num ca2">${f2(s.spa)}</td><td class="num cc2">${f2(s.spc)}</td><td class="num ct3">${f2(s.spt)}</td>
+              <td class="num" style="color:var(--mu2)">${f1(s.sda)}</td><td class="num" style="color:var(--mu2)">${f1(s.sdc)}</td><td class="num" style="color:var(--mu2)">${f1(s.sdt)}</td>
+              <td class="num">${chip(s.dna,'a')}</td><td class="num">${chip(s.dnc,'c')}</td><td class="num">${chip(s.dnt,'t')}</td>
+              <td class="num" style="color:var(--warn)">${vchip(s.sva)}</td><td class="num" style="color:var(--warn)">${vchip(s.svc)}</td><td class="num" style="color:var(--warn)">${vchip(s.svt)}</td>
+            </tr>`).join('')}
+          <tr class="tr-tot">
+            <td>∑ ${col.lbl}</td>
+            <td class="num">${col.totUC.a}</td><td class="num">${col.totUC.c}</td><td class="num">${col.totUC.t}</td>
+            <td class="num">${f2(col.tpa)}</td><td class="num">${f2(col.tpc)}</td><td class="num">${f2(col.tpt)}</td>
+            <td class="num" style="color:var(--mu2)">${f1(calcMinD(col.tpa,parseFloat(G('b5').value)||1.6))}</td>
+            <td class="num" style="color:var(--mu2)">${f1(calcMinD(col.tpc,parseFloat(G('b5').value)||1.6))}</td>
+            <td class="num" style="color:var(--mu2)">${f1(calcMinD(col.tpt,parseFloat(G('b5').value)||1.6))}</td>
+            <td class="num">${chip(col.tdna,'a')}</td><td class="num">${chip(col.tdnc,'c')}</td><td class="num">${chip(col.tdnt,'t')}</td>
+            <td class="num" style="color:var(--warn)">${vchip(col.tva)}</td><td class="num" style="color:var(--warn)">${vchip(col.tvc)}</td><td class="num" style="color:var(--warn)">${vchip(col.tvt)}</td>
+          </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+ 
+// ═══════════════════════════════════════
+// SVG DIAGRAM
+// ═══════════════════════════════════════
+function buildSVG(res){
+  /*
+   LAYOUT:
+   - One colonna per column block, side by side
+   - Within each colonna: floors stacked VERTICALLY (each floor = one horizontal branch)
+   - Floor 1 at bottom, highest floor at top (like a real building)
+   - Vertical riser pipe connects all floors on the right side
+   - Each floor branch: baths connected left→right, T-junction to riser at last bath
+   - Two separate pipes: AFS (cyan, left of riser) and ACS (orange, right of riser)
+  */
+  const BW=110, BH=58, BGAP=16;  // bath box width, height, gap between baths
+  const FGAP=20;   // vertical gap between floors
+  const FH=BH+FGAP+30; // total height per floor row
+  const LPAD=20;   // left padding per colonna
+  const RISER_OFF=8; // riser x offset from last bath
+  const COLPAD=60; // padding between colonnes
+ 
+  const cols=res.cols;
+  if(!cols.length)return'';
+ 
+  // Pre-compute per-colonna layout
+  const colLayouts=cols.map(col=>{
+    // Group baths by floor
+    const byFloor={};
+    col.baths.forEach(b=>{
+      if(!byFloor[b.floor])byFloor[b.floor]=[];
+      byFloor[b.floor].push(b);
+    });
+    // Sort floors descending (top floor first in SVG = higher Y first drawn lower)
+    const floors=Object.keys(byFloor).map(Number).sort((a,b)=>b-a);
+    const maxBaths=Math.max(...floors.map(f=>byFloor[f].length),1);
+    const w=LPAD+maxBaths*(BW+BGAP)+RISER_OFF+40;
+    const h=floors.length*FH+60;
+    return{col,byFloor,floors,maxBaths,w,h};
+  });
+ 
+  const totalW=colLayouts.reduce((s,l)=>s+l.w+COLPAD,20);
+  const totalH=Math.max(...colLayouts.map(l=>l.h))+60;
+ 
+  let s=`<svg viewBox="0 0 ${totalW} ${totalH}" xmlns="http://www.w3.org/2000/svg"
+    style="width:100%;background:#060810;border-radius:8px;display:block">`;
+ 
+  let baseX=20;
+ 
+  colLayouts.forEach(({col,byFloor,floors,w})=>{
+    // Find the last bath (highest order) for riser X
+    const allSorted=[...col.baths].sort((a,b)=>a.order-b.order);
+    const nbAll=allSorted.length;
+ 
+    // Riser X = based on max baths in any floor
+    const maxBathsInFloor=Math.max(...floors.map(f=>byFloor[f].length),1);
+    const riserX=baseX+LPAD+maxBathsInFloor*(BW+BGAP)-BGAP/2+RISER_OFF;
+ 
+    // Colonna label
+    s+=`<text x="${riserX}" y="18" text-anchor="middle" fill="#c084fc"
+      font-size="11" font-weight="700" font-family="DM Mono,monospace">⬆ ${col.lbl}</text>`;
+ 
+    // Vertical riser pipes (AFS left, ACS right) — full height
+    const riserTop=24;
+    const riserBottom=28+floors.length*FH;
+    s+=`<line x1="${riserX-4}" y1="${riserTop}" x2="${riserX-4}" y2="${riserBottom}"
+      stroke="#22d3ee" stroke-width="3" stroke-linecap="round"/>`;
+    s+=`<line x1="${riserX+4}" y1="${riserTop}" x2="${riserX+4}" y2="${riserBottom}"
+      stroke="#f97316" stroke-width="3" stroke-linecap="round"/>`;
+    // Arrow at top
+    s+=`<polygon points="${riserX-4},${riserTop} ${riserX-8},${riserTop+8} ${riserX},${riserTop+8}" fill="#22d3ee" opacity=".8"/>`;
+    s+=`<polygon points="${riserX+4},${riserTop} ${riserX},${riserTop+8} ${riserX+8},${riserTop+8}" fill="#f97316" opacity=".8"/>`;
+ 
+    // Colonna total DN
+    s+=`<text x="${riserX}" y="${riserBottom+14}" text-anchor="middle" fill="#22d3ee"
+      font-size="8" font-family="DM Mono,monospace">AFS DN${col.tdna.dn}</text>`;
+    s+=`<text x="${riserX}" y="${riserBottom+24}" text-anchor="middle" fill="#f97316"
+      font-size="8" font-family="DM Mono,monospace">ACS DN${col.tdnc.dn}</text>`;
+ 
+    // Draw each floor (top = highest floor number)
+    floors.forEach((fl,fi)=>{
+      const bathsOnFloor=[...byFloor[fl]].sort((a,b)=>a.order-b.order);
+      const nb=bathsOnFloor.length;
+      const floorY=30+fi*FH; // top of bath boxes for this floor
+      const pipeY=floorY+BH+14; // Y of horizontal branch pipes
+ 
+      // Floor label on riser
+      s+=`<text x="${riserX+14}" y="${pipeY+4}" fill="#22d3ee" opacity=".6"
+        font-size="8" font-family="DM Mono,monospace">P${fl}</text>`;
+ 
+      // T-junction on riser for this floor
+      s+=`<circle cx="${riserX-4}" cy="${pipeY}" r="3" fill="#060810" stroke="#22d3ee" stroke-width="1.5"/>`;
+      s+=`<circle cx="${riserX+4}" cy="${pipeY+8}" r="3" fill="#060810" stroke="#f97316" stroke-width="1.5"/>`;
+ 
+      // Horizontal branch from riser to first bath
+      const firstBathCX=baseX+LPAD+BW/2;
+      if(nb>0){
+        s+=`<line x1="${firstBathCX}" y1="${pipeY}" x2="${riserX-4}" y2="${pipeY}"
+          stroke="#22d3ee" stroke-width="2" stroke-linecap="round"/>`;
+        s+=`<line x1="${firstBathCX}" y1="${pipeY+8}" x2="${riserX+4}" y2="${pipeY+8}"
+          stroke="#f97316" stroke-width="2" stroke-linecap="round"/>`;
+      }
+ 
+      // Find segment for this floor (cumulative after this floor's baths)
+      const floorBathOrders=bathsOnFloor.map(b=>b.order);
+      const maxFloorOrder=Math.max(...floorBathOrders);
+      const seg=col.segs.find(s2=>s2.bOrder===maxFloorOrder);
+ 
+      // DN label on branch
+      if(seg){
+        s+=`<text x="${(firstBathCX+riserX)/2}" y="${pipeY-4}" text-anchor="middle"
+          fill="#22d3ee" font-size="7" font-family="DM Mono,monospace">DN${seg.dna.dn}</text>`;
+        s+=`<text x="${(firstBathCX+riserX)/2}" y="${pipeY+22}" text-anchor="middle"
+          fill="#f97316" font-size="7" font-family="DM Mono,monospace">DN${seg.dnc.dn}</text>`;
+      }
+ 
+      // Draw baths on this floor
+      bathsOnFloor.forEach((b,bi)=>{
+        const cx=baseX+LPAD+bi*(BW+BGAP)+BW/2;
+        const bx=cx-BW/2;
+ 
+        // T-junction on branch for this bath
+        s+=`<circle cx="${cx}" cy="${pipeY}" r="3" fill="#060810" stroke="#22d3ee" stroke-width="1.5"/>`;
+        s+=`<circle cx="${cx}" cy="${pipeY+8}" r="3" fill="#060810" stroke="#f97316" stroke-width="1.5"/>`;
+ 
+        // Drop from bath bottom to branch
+        s+=`<line x1="${cx-3}" y1="${floorY+BH}" x2="${cx-3}" y2="${pipeY}"
+          stroke="#22d3ee" stroke-width="1.2" stroke-dasharray="3,2" opacity=".5"/>`;
+        s+=`<line x1="${cx+3}" y1="${floorY+BH}" x2="${cx+3}" y2="${pipeY+8}"
+          stroke="#f97316" stroke-width="1.2" stroke-dasharray="3,2" opacity=".5"/>`;
+ 
+        // Bath box
+        s+=`<rect x="${bx}" y="${floorY}" width="${BW}" height="${BH}" rx="5"
+          fill="#0b0e18" stroke="#222840" stroke-width="1.5"/>`;
+        s+=`<rect x="${bx}" y="${floorY}" width="${BW/2}" height="3" fill="#22d3ee" opacity=".5"/>`;
+        s+=`<rect x="${bx+BW/2}" y="${floorY}" width="${BW/2}" height="3" fill="#f97316" opacity=".5"/>`;
+        s+=`<text x="${cx}" y="${floorY+15}" text-anchor="middle" fill="#dde4f5"
+          font-size="9" font-weight="600" font-family="DM Mono,monospace">${b.lbl}</text>`;
+        s+=`<text x="${cx}" y="${floorY+27}" text-anchor="middle" fill="#4b5680"
+          font-size="8" font-family="DM Mono,monospace">P${b.floor} · #${b.order}</text>`;
+        if(b.dna){
+          s+=`<text x="${cx}" y="${floorY+41}" text-anchor="middle" fill="#22d3ee"
+            font-size="7" font-family="DM Mono,monospace">DN${b.dna.dn}</text>`;
+          s+=`<text x="${cx}" y="${floorY+52}" text-anchor="middle" fill="#f97316"
+            font-size="7" font-family="DM Mono,monospace">DN${b.dnc.dn}</text>`;
+        }
+      });
+    });
+ 
+    // Legend first colonna only
+    if(col===cols[0]){
+      const ly=totalH-16;
+      s+=`<rect x="8" y="${ly-6}" width="12" height="4" rx="2" fill="#22d3ee"/>`;
+      s+=`<text x="24" y="${ly}" fill="#22d3ee" font-size="8" font-family="DM Mono,monospace">AFS</text>`;
+      s+=`<rect x="55" y="${ly-6}" width="12" height="4" rx="2" fill="#f97316"/>`;
+      s+=`<text x="71" y="${ly}" fill="#f97316" font-size="8" font-family="DM Mono,monospace">ACS</text>`;
+    }
+ 
+    baseX+=w+COLPAD;
+  });
+ 
+  s+=`</svg>`;
+  return s;
+}
+ 
+// ═══════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════
+function expXL(){
+  if(!lastRes){alert('Prima calcola');return}
+  const res=lastRes;
+  const rows=[
+    ['ISA UNI 9182 — Dimensionamento Idrico'],
+    [`V progetto: ${G('b5').value} m/s | Colonna: ${PIPE[G('mat-col').value].lbl} | Stacchi: ${PIPE[G('mat-br').value].lbl}`],
+    [],
+    ['Sezione','UC AFS','UC ACS','UC TOT','Q AFS (l/s)','Q ACS (l/s)','Q TOT (l/s)','Ø AFS','Ø ACS','Ø TOT','DN AFS','DI AFS','DN ACS','DI ACS','DN TOT','DI TOT'],
+  ];
+  for(let col of res.cols){
+    rows.push([col.lbl]);
+    Object.entries(col.byFloor).sort(([a],[b])=>+a-+b).forEach(([fl,baths])=>{
+      rows.push(['  Piano '+fl]);
+      baths.sort((a,b)=>a.order-b.order).forEach(b=>
+        rows.push([`    ${b.lbl} #${b.order}`,b.sa,b.sc,b.st,+f2(b.pa),+f2(b.pc),+f2(b.pt),+f1(b.da),+f1(b.dc),+f1(b.dt),'DN '+b.dna.dn,b.dna.di,'DN '+b.dnc.dn,b.dnc.di,'DN '+b.dnt.dn,b.dnt.di])
+      );
+    });
+    col.segs.forEach(s=>
+      rows.push([`  ↳ ${s.lbl}`,s.cumA,s.cumC,s.cumT,+f2(s.spa),+f2(s.spc),+f2(s.spt),+f1(s.sda),+f1(s.sdc),+f1(s.sdt),'DN '+s.dna.dn,s.dna.di,'DN '+s.dnc.dn,s.dnc.di,'DN '+s.dnt.dn,s.dnt.di])
+    );
+    rows.push([`∑ ${col.lbl}`,col.totUC.a,col.totUC.c,col.totUC.t,+f2(col.tpa),+f2(col.tpc),+f2(col.tpt),'','','','DN '+col.tdna.dn,col.tdna.di,'DN '+col.tdnc.dn,col.tdnc.di,'DN '+col.tdnt.dn,col.tdnt.di]);
+  }
+  rows.push(['TOTALE',res.gUC.a,res.gUC.c,res.gUC.t,+f2(res.gpa),+f2(res.gpc),+f2(res.gpt),+f1(res.gda),+f1(res.gdc),+f1(res.gdt),'DN '+res.gdna.dn,res.gdna.di,'DN '+res.gdnc.dn,res.gdnc.di,'DN '+res.gdnt.dn,res.gdnt.di]);
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:40},{wch:8},{wch:8},{wch:8},{wch:11},{wch:11},{wch:11},{wch:8},{wch:8},{wch:8},{wch:7},{wch:7},{wch:7},{wch:7},{wch:7},{wch:7}];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'ISA UNI9182');
+  XLSX.writeFile(wb,'ISA_UNI9182.xlsx');
+}
+function expPDF(){window.print()}
+ 
+// ═══════════════════════════════════════════════════════
+// DXF EXPORT — AutoCAD compatible
+// ═══════════════════════════════════════════════════════
+function expDXF(){
+  if(!lastRes){alert('Prima calcola i risultati');return}
+  const res=lastRes;
+  const BW=110,BH=58,BGAP=16,FH=108,LPAD=20,RISER_OFF=8,COLPAD=80;
+  const WORK_H=3000;
+  function fy(y){return WORK_H-y}
+ 
+  // DXF record builder
+  function rec(pairs){return pairs.join('\n')+'\n'}
+ 
+  // Entities
+  function dline(lay,x1,y1,x2,y2){
+    return rec(['0','LINE','8',lay,'10',x1.toFixed(2),'20',y1.toFixed(2),'30','0.0','11',x2.toFixed(2),'21',y2.toFixed(2),'31','0.0']);
+  }
+  function drect(lay,x,y,w,h){
+    const bx=x,by=y,bx2=x+w,by2=y+h;
+    return rec(['0','LWPOLYLINE','8',lay,'90','4','70','1',
+      '10',bx.toFixed(2),'20',by.toFixed(2),
+      '10',bx2.toFixed(2),'20',by.toFixed(2),
+      '10',bx2.toFixed(2),'20',by2.toFixed(2),
+      '10',bx.toFixed(2),'20',by2.toFixed(2)]);
+  }
+  function dtext(lay,x,y,h,txt){
+    return rec(['0','TEXT','8',lay,'10',x.toFixed(2),'20',y.toFixed(2),'30','0.0','40',h,'1',String(txt)]);
+  }
+  function dcircle(lay,cx,cy,r){
+    return rec(['0','CIRCLE','8',lay,'10',cx.toFixed(2),'20',cy.toFixed(2),'30','0.0','40',r.toFixed(2)]);
+  }
+ 
+  // Build header
+  let lines=[];
+  lines.push('0','SECTION','2','HEADER');
+  lines.push('9','$ACADVER','1','AC1015');
+  lines.push('9','$INSUNITS','70','4');
+  lines.push('9','$MEASUREMENT','70','1');
+  lines.push('0','ENDSEC');
+ 
+  // Layers
+  const layDefs=[
+    ['AFS_PIPE','4'],['ACS_PIPE','30'],['RISER','6'],
+    ['BATH_BOX','7'],['TEXT_LABEL','3'],['DN_LABEL','4']
+  ];
+  lines.push('0','SECTION','2','TABLES','0','TABLE','2','LAYER','70',String(layDefs.length));
+  layDefs.forEach(function(ld){
+    lines.push('0','LAYER','2',ld[0],'70','0','62',ld[1],'6','CONTINUOUS');
+  });
+  lines.push('0','ENDTAB','0','ENDSEC');
+ 
+  // Entities
+  lines.push('0','SECTION','2','ENTITIES');
+  let ents='';
+ 
+  let baseX=20;
+  res.cols.forEach(function(col){
+    var byFloor={};
+    col.baths.forEach(function(b){
+      if(!byFloor[b.floor])byFloor[b.floor]=[];
+      byFloor[b.floor].push(b);
+    });
+    var floors=Object.keys(byFloor).map(Number).sort(function(a,b){return b-a});
+    var maxB=Math.max.apply(null,floors.map(function(f){return byFloor[f].length}));
+    var riserX=baseX+LPAD+maxB*(BW+BGAP)-BGAP/2+RISER_OFF;
+    var riserTop=30;
+    var riserBottom=30+floors.length*FH;
+ 
+    // Colonna label
+    ents+=dtext('RISER',riserX-20,fy(riserTop-14),4,col.lbl);
+    // Vertical risers
+    ents+=dline('AFS_PIPE',riserX-3,fy(riserTop),riserX-3,fy(riserBottom));
+    ents+=dline('ACS_PIPE',riserX+3,fy(riserTop),riserX+3,fy(riserBottom));
+    // Total DN
+    ents+=dtext('DN_LABEL',riserX-28,fy(riserBottom+10),3,'AFS DN'+col.tdna.dn);
+    ents+=dtext('DN_LABEL',riserX-28,fy(riserBottom+20),3,'ACS DN'+col.tdnc.dn);
+ 
+    floors.forEach(function(fl,fi){
+      var bathsOnFloor=byFloor[fl].slice().sort(function(a,b){return a.order-b.order});
+      var nb=bathsOnFloor.length;
+      var floorY=30+fi*FH;
+      var pipeY=floorY+BH+14;
+      var firstCX=baseX+LPAD+BW/2;
+ 
+      ents+=dtext('TEXT_LABEL',riserX+8,fy(pipeY),3.5,'Piano '+fl);
+      ents+=dcircle('AFS_PIPE',riserX-3,fy(pipeY),1.5);
+      ents+=dcircle('ACS_PIPE',riserX+3,fy(pipeY+8),1.5);
+      ents+=dline('AFS_PIPE',firstCX,fy(pipeY),riserX-3,fy(pipeY));
+      ents+=dline('ACS_PIPE',firstCX,fy(pipeY+8),riserX+3,fy(pipeY+8));
+ 
+      var maxOrd=Math.max.apply(null,bathsOnFloor.map(function(b){return b.order}));
+      var seg=col.segs.filter(function(s){return s.bOrder===maxOrd})[0];
+      if(seg){
+        var mx=(firstCX+riserX)/2;
+        ents+=dtext('DN_LABEL',mx-12,fy(pipeY-5),3,'DN'+seg.dna.dn);
+        ents+=dtext('DN_LABEL',mx-12,fy(pipeY+16),3,'DN'+seg.dnc.dn);
+      }
+ 
+      bathsOnFloor.forEach(function(b,bi){
+        var cx=baseX+LPAD+bi*(BW+BGAP)+BW/2;
+        var bx=cx-BW/2;
+        ents+=dcircle('AFS_PIPE',cx,fy(pipeY),1.5);
+        ents+=dcircle('ACS_PIPE',cx,fy(pipeY+8),1.5);
+        ents+=dline('AFS_PIPE',cx-3,fy(floorY+BH),cx-3,fy(pipeY));
+        ents+=dline('ACS_PIPE',cx+3,fy(floorY+BH),cx+3,fy(pipeY+8));
+        ents+=drect('BATH_BOX',bx,fy(floorY+BH),BW,BH);
+        ents+=dtext('TEXT_LABEL',bx+2,fy(floorY+12),3.5,b.lbl);
+        ents+=dtext('TEXT_LABEL',bx+2,fy(floorY+22),3,'P'+b.floor+' #'+b.order);
+        if(b.dna){
+          ents+=dtext('DN_LABEL',bx+2,fy(floorY+34),3,'AFS DN'+b.dna.dn);
+          ents+=dtext('DN_LABEL',bx+2,fy(floorY+44),3,'ACS DN'+b.dnc.dn);
+        }
+      });
+    });
+ 
+    baseX+=LPAD+maxB*(BW+BGAP)+RISER_OFF+40+COLPAD;
+  });
+ 
+  lines.push('0','ENDSEC','0','EOF');
+ 
+  var dxf=lines.join('\n')+'\n'+ents;
+  var blob=new Blob([dxf],{type:'application/dxf'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url; a.download='ISA_UNI9182_Schema.dxf'; a.click();
+  URL.revokeObjectURL(url);
+}
+ 
